@@ -8,6 +8,7 @@ class ErrorCatcher
         $api_key = '',
         $user_id = '',
         $user_params = array(),
+        $show_connection_error = true,
         $client_name = 'php-client',
         $client_version = '0.1';
 
@@ -20,12 +21,13 @@ class ErrorCatcher
      * @param $user_params - array of custom user params (for ex. email, tags etc)
      * @throws Exception
      */
-    public static function config($base_url, $api_key, $user_id, $user_params)
+    public static function config($base_url, $api_key, $user_id, $user_params, $show_connection_error = true)
     {
         self::$base_url = $base_url;
         self::$api_key = $api_key;
         self::$user_id = $user_id;
         self::$user_params = $user_params;
+        self::$show_connection_error = $show_connection_error;
 
         if(empty(self::$base_url)){
             throw new \Exception('Error Catcher: empty $base_url param');
@@ -423,7 +425,7 @@ class ErrorCatcher
             case E_USER_DEPRECATED: // 16384 //
                 return 'E_USER_DEPRECATED';
             default:
-                return '';
+                return $error_code; // custom error code
         }
     }
 
@@ -447,6 +449,10 @@ class ErrorCatcher
             )
         );
 
-        @file_get_contents($url, false, $context);
+        if (self::$show_connection_error) {
+            file_get_contents($url, false, $context);
+        } else {
+            @file_get_contents($url, false, $context);
+        }
     }
 }

@@ -1,10 +1,10 @@
 <?php
 include_once '../src/client.php';
-\ErrorCatcher::config('http://errors_catcher.dev', 'u4cgJ267cZjt5RSwiTb2Eh4tlJUa767qflUhTSoi', 'u122', ['email' => '1234']);
+\ErrorCatcher::config('http://errors_catcher.dev', 'u4cgJ267cZjt5RSwiTb2Eh4tlJUa767qflUhTSoi', 'u122', ['email' => '1234'], true);
 \ErrorCatcher::setErrorHandler();
 
 function test2(){
-    throw new Exception('omg');
+    throw new Exception('omg', 123);
 
     //qwewqew();
 }
