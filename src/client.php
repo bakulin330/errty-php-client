@@ -46,8 +46,8 @@ class ErrorCatcher
      */
     public static function setErrorHandler()
     {
-        set_error_handler(array(self::class, 'errorHandler'));
-        register_shutdown_function(array(self::class, 'fatalErrorCatcher'));
+        set_error_handler(array(__CLASS__, 'errorHandler'));
+        register_shutdown_function(array(__CLASS__, 'fatalErrorCatcher'));
     }
 
     /**
