@@ -2,5 +2,10 @@
     "name": "errty/php-client",
     "description": "PHP client for catching errors",
     "type": "library",
-    "require": {}
+    "require": {},
+    "autoload": {
+        "classmap": [
+            "src/client.php"
+        ]
+    }
 }
