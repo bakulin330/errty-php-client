@@ -1,0 +1,6 @@
+{
+    "name": "errty/php-client",
+    "description": "PHP client for catching errors",
+    "type": "library",
+    "require": {}
+}
