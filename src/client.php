@@ -21,19 +21,18 @@ class ErrorCatcher
      * @param $user_params - array of custom user params (for ex. email, tags etc)
      * @throws Exception
      */
-    public static function config($base_url, $api_key, $user_id, $user_params, $show_connection_error = true)
-    {
+    public static function config($base_url, $api_key, $user_id, $user_params, $show_connection_error = true) {
         self::$base_url = $base_url;
         self::$api_key = $api_key;
         self::$user_id = $user_id;
         self::$user_params = $user_params;
         self::$show_connection_error = $show_connection_error;
 
-        if(empty(self::$base_url)){
+        if (empty(self::$base_url)) {
             throw new \Exception('Error Catcher: empty $base_url param');
         }
 
-        if(empty(self::$api_key)){
+        if (empty(self::$api_key)) {
             throw new \Exception('Error Catcher: empty $api_key param');
         }
 
@@ -44,8 +43,7 @@ class ErrorCatcher
      * Setting PHP error catcher (this action is not required)
      *
      */
-    public static function setErrorHandler()
-    {
+    public static function setErrorHandler() {
         set_error_handler(array(__CLASS__, 'errorHandler'));
         register_shutdown_function(array(__CLASS__, 'fatalErrorCatcher'));
     }
@@ -58,8 +56,7 @@ class ErrorCatcher
      * @param null $custom_params - array of custom error params (for ex. tags, time etc)
      * @return bool
      */
-    public static function registerError($ex = null, $custom_error_id = null, $custom_params = null)
-    {
+    public static function registerError($ex = null, $custom_error_id = null, $custom_params = null) {
         if (empty($ex)) {
             return false;
         }
@@ -78,8 +75,7 @@ class ErrorCatcher
      * @param $error_line
      * @return bool
      */
-    public static function errorHandler($error_number, $error_message, $error_file, $error_line)
-    {
+    public static function errorHandler($error_number, $error_message, $error_file, $error_line) {
         if (__FILE__ != $error_file) {
             $trace = debug_backtrace();
 
@@ -97,8 +93,7 @@ class ErrorCatcher
      *
      * @return bool
      */
-    public static function fatalErrorCatcher()
-    {
+    public static function fatalErrorCatcher() {
         $error = error_get_last();
         if (!$error || !isset($error['type']) || !in_array($error['type'], array(E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR))) {
             return false;
@@ -120,15 +115,14 @@ class ErrorCatcher
      * @param null $custom_error_id
      * @param null $custom_params
      */
-    private static function sendError($message, $code, $file, $line, $trace = null, $custom_error_id = null, $custom_params = null)
-    {
+    private static function sendError($message, $code, $file, $line, $trace = null, $custom_error_id = null, $custom_params = null) {
         // Message
         if (empty($message)) {
             $message = '';
         }
 
         if (!is_string($message)) {
-            $message = (string)$message;
+            $message = (string) $message;
         }
 
         if (mb_strlen($message) > 2048) {
@@ -144,11 +138,11 @@ class ErrorCatcher
         }
 
         if (!is_string($file)) {
-            $file = (string)$file;
+            $file = (string) $file;
         }
 
         // Line
-        $line = (int)$line;
+        $line = (int) $line;
         if ($line < 1) {
             $line = 1;
         }
@@ -226,8 +220,7 @@ class ErrorCatcher
      * @param $param
      * @return string
      */
-    private static function getEnvValue($env_var, $param)
-    {
+    private static function getEnvValue($env_var, $param) {
         $res = isset($env_var[$param]) ? $env_var[$param] : '';
 
         if (is_string($res) and mb_strlen($res) > 2048) {
@@ -243,8 +236,7 @@ class ErrorCatcher
      * @param $var
      * @return array
      */
-    private static function formatVar($var)
-    {
+    private static function formatVar($var) {
         if (!is_array($var)) {
             return $var;
         }
@@ -266,8 +258,7 @@ class ErrorCatcher
      * @param $env_var
      * @return array
      */
-    private static function getGlobalVar($env_var)
-    {
+    private static function getGlobalVar($env_var) {
         $env_var = '_' . strtoupper($env_var);
 
         if (!isset($GLOBALS[$env_var])) {
@@ -284,8 +275,7 @@ class ErrorCatcher
      *
      * @return array
      */
-    private static function getClientHeaders()
-    {
+    private static function getClientHeaders() {
         $var = self::getGlobalVar('server');
         if (!is_array($var)) {
             return array();
@@ -309,8 +299,7 @@ class ErrorCatcher
      * @param $line
      * @return array
      */
-    private static function getStackTrace($stack_trace, $file, $line)
-    {
+    private static function getStackTrace($stack_trace, $file, $line) {
 
         if (empty($stack_trace) or !is_array($stack_trace)) {
             $stack_trace = array();
@@ -355,8 +344,7 @@ class ErrorCatcher
      * @param $line
      * @return array
      */
-    private static function getStackTraceContext($file_name, $line)
-    {
+    private static function getStackTraceContext($file_name, $line) {
         $result = array(
             'context' => null,
             'first_line_index' => null,
@@ -405,8 +393,7 @@ class ErrorCatcher
      * @param $error_code
      * @return string
      */
-    private static function formatErrorCode($error_code)
-    {
+    private static function formatErrorCode($error_code) {
         switch ($error_code) {
             case E_ERROR: // 1 //
                 return 'E_ERROR';
@@ -448,8 +435,7 @@ class ErrorCatcher
      *
      * @param $error_info
      */
-    private static function sendErrorInfoToServer($error_info)
-    {
+    private static function sendErrorInfoToServer($error_info) {
         $url = self::$base_url . 'client/error';
 
         $context = stream_context_create(
