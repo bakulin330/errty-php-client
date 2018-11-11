@@ -81,7 +81,12 @@ class ErrorCatcher
     public static function errorHandler($error_number, $error_message, $error_file, $error_line)
     {
         if (__FILE__ != $error_file) {
-            self::sendError($error_message, $error_number, $error_file, $error_line);
+            $trace = debug_backtrace();
+
+            array_shift($trace);
+            array_shift($trace);
+
+            self::sendError($error_message, $error_number, $error_file, $error_line, $trace);
         }
 
         return false;
@@ -320,14 +325,23 @@ class ErrorCatcher
 
         $out = array();
         foreach ($stack_trace as $i => $item) {
-            $context = self::getStackTraceContext($item['file'], $item['line']);
+            $file = isset($item['file']) ? $item['file'] : '';
+            $line = isset($item['line']) ? $item['line'] : '';
+
+            $context = [];
+            $first_line_index = 0;
+            if (!empty($file) and !empty($line)) {
+                $context = self::getStackTraceContext($item['file'], $item['line']);
+                $first_line_index = $context['first_line_index'];
+                $context = $context['context'];
+            }
             $out[] = array(
-                'line' => $item['line'],
-                'file_name' => $item['file'],
-                'method_name' => $item['function'],
+                'line' => $line,
+                'file_name' => $file,
+                'method_name' => isset($item['function']) ? $item['function'] : '',
                 'args' => array(), //$item['args'],
-                'context' => $context['context'],
-                'first_line_index' => $context['first_line_index'],
+                'context' => $context,
+                'first_line_index' => $first_line_index,
             );
         }
 
