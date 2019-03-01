@@ -149,8 +149,8 @@ class ErrorCatcher
 
         // Stack Trace
         $trace = self::getStackTrace($trace, $file, $line);
-
-        $protocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']), 'https') === false ? 'http' : 'https';
+        $serverProtocol = strtolower(self::getEnvValue($_SERVER, 'SERVER_PROTOCOL'));
+        $protocol = strpos($serverProtocol, 'https') === false ? 'http' : 'https';
         $host = self::getEnvValue($_SERVER, 'HTTP_HOST');
         $script = self::getEnvValue($_SERVER, 'SCRIPT_NAME');
         $url = $protocol . '://' . $host . $script;
